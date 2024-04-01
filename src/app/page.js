@@ -11,8 +11,8 @@ export default async function Home() {
   var collectionName = collectionNameFromJson(semgrepJsonFilePath);
   var results = await getAllDocuments(collectionName);
 
-  // results = results.filter(r => r.extra.metadata.category === "security")
-  // results = results.filter(r => r.severity === "ERROR")
+  results = results.filter(r => r.extra.metadata.category === "security")
+  results = results.filter(r => r.severity === "ERROR")
 
   return (
     <FilterResults

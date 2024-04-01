@@ -1,50 +1,51 @@
 "use client";
 
-import internal from "stream";
 import { updateTriage } from "./lib/actions";
 const { useState, useRef, useEffect, use } = require("react");
 
-export default function SemgResult({ result, collectionName }) {
+export default function SemgResult({ result, collectionName, onUpdate }) {
   const [status, setStatus] = useState(result.status);
-
-  // submit form for any change since we are running locally
   const triageForm = useRef(null);
-  const handleSubmit = (event) => {
-    triageForm.current.requestSubmit();
+  var statusInput = useRef(null);
+  var ignoreReasonInput = useRef(null);
+  var internalLinkInput = useRef(null);
 
-    // if (event.target.name === "ignoreReason") {
-    //   event.target.value = event.target.value;
-    // }
-  };
-
-  // pass the click to the radio button
-  const outerDivClicked = (event) => {
-    var children = event.target.children;
-    if (children.length > 1) {
-      children[0].click();
-      children[1].click();
+  // when the form is changed manually
+  function changed(event) {
+    // identify the change
+    var statusFromEvent = result.status;
+    if (event.target.innerText === "✅ Triaged") {
+      statusFromEvent = "triaged";
+      console.log("triaged");
+    } else if (event.target.innerText === "👎 Ignore") {
+      statusFromEvent = "ignored";
+    } else if (event.target.innerText === "🕕 Raised") {
+      statusFromEvent = "raised";
     }
-  };
 
-  const ignoreReason = useRef(null);
+    // update the parent for filtering
+    onUpdate({
+      ...result,
+      fingerprint: result.fingerprint,
+      status: statusFromEvent,
+      ignoreReason: ignoreReasonInput.current.value,
+      internalLink: internalLinkInput.current.value,
+    });
+
+    // send the form to backend
+    statusInput.current.value = statusFromEvent;
+    triageForm.current.requestSubmit();
+    setStatus(statusFromEvent);
+  }
+
+  // when the result is updated from the parent set respective form value
   useEffect(() => {
-    ignoreReason.current.value = result.ignoreReason;
-  }, [result.ignoreReason]);
+    statusInput.current.value = result.status;
+    ignoreReasonInput.current.value = result.ignoreReason;
+    internalLinkInput.current.value = result.internalLink;
+  }, [result]);
 
-  const internalLink = useRef(null);
-  useEffect(() => {
-    internalLink.current.value = result.internalLink;
-  }, [result.internalLink]);
-
-  // ignore reason changed
-  const ignoreReasonChanged = (event) => {
-    handleSubmit(event);
-  };
-
-  const internalLinkChanged = (event) => {
-    handleSubmit(event);
-  };
-
+  // generate all probable gitlab links since we do not know the project root
   var linkHash = "#L" + result.start.line + "-" + result.end.line;
   var gitlabPaths = [];
   var parts = result.path.split("/").length - 2;
@@ -57,95 +58,61 @@ export default function SemgResult({ result, collectionName }) {
       linkHash;
     gitlabPaths.push(gitlabPath);
   }
+
   return (
     <div className="p-2 flex items-center">
       <form action={updateTriage} className="p-1" ref={triageForm}>
         <input type="hidden" name="fingerprint" value={result.fingerprint} />
-
-        <fieldset className="hover:text-white-1 text-gray-500 select-none">
+        <input
+          type="hidden"
+          name="status"
+          ref={statusInput}
+          value={result.status}
+        />
+        <div className="hover:text-white-1 text-gray-500 select-none p-1">
           <div
-            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer active:bg-white ${
+            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer ${
               status === "triaged" ? "bg-gray-600 text-white" : ""
             }`}
-            onClick={(e) => {
-              outerDivClicked(e);
-              setStatus("triaged");
-            }}
+            name="triaged"
+            onClick={changed}
           >
-            <input
-              type="radio"
-              name="status"
-              id="triaged"
-              value="triaged"
-              className=""
-              checked={status === "triaged"}
-              hidden
-              onChange={handleSubmit}
-            />
-            <label htmlFor="triage">✅ Triaged</label>
+            ✅ Triaged
           </div>
           <div
             className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer active:bg-blue-gray-50 ${
               status === "ignored" ? "bg-gray-600 text-white" : ""
             }`}
-            onClick={(e) => {
-              outerDivClicked(e);
-              setStatus("ignored");
-            }}
+            onClick={changed}
           >
-            <input
-              type="radio"
-              name="status"
-              id="ignored"
-              value="ignored"
-              className=""
-              checked={status === "ignored"}
-              hidden
-              onChange={handleSubmit}
-            />
-            <label htmlFor="ignore" className="active:bg-blue-gray-50">
-              👎 Ignore
-            </label>
+            👎 Ignore
           </div>
           <div
-            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer active:bg-white ${
+            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer ${
               status === "raised" ? "bg-gray-600 text-white" : ""
             }`}
-            onClick={(e) => {
-              outerDivClicked(e);
-              setStatus("raised");
-            }}
+            onClick={changed}
           >
-            <input
-              type="radio"
-              name="status"
-              id="raised"
-              value="raised"
-              className=""
-              checked={status === "raised"}
-              hidden
-              onChange={handleSubmit}
-            />
-            <label htmlFor="raised">🕕 Raised</label>
+            🕕 Raised
           </div>
-        </fieldset>
+        </div>
 
         <div className="p-1">
           <input
             type="text"
             name="ignoreReason"
-            ref={ignoreReason}
             placeholder="Suppress Reason"
-            onChange={ignoreReasonChanged}
+            ref={ignoreReasonInput}
+            onChange={changed}
           />
         </div>
         <div className="p-1">
           <input
             type="text"
             name="internalLink"
-            ref={internalLink}
             placeholder="Internal Link"
-            onChange={handleSubmit}
+            ref={internalLinkInput}
+            onChange={changed}
           />
         </div>
       </form>
@@ -187,7 +154,7 @@ export default function SemgResult({ result, collectionName }) {
         <div>{result.extra.message}</div>
         <div className="font-mono text-sm">
           severity:{result.severity} category:{result.extra.metadata.category}{" "}
-          impact:{result.extra.metadata.impact} likelyhood:
+          impact:{result.extra.metadata.impact} likelihood:
           {result.extra.metadata.likelihood}
         </div>
         <div hidden={result.extra.metadata.description === undefined}>

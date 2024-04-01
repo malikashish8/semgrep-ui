@@ -1,7 +1,6 @@
 "use client";
 
-// import SemgError from "./semgError";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import SemgResult from "./semgResult";
 
 export default function FilterResults({ results, collectionName }) {
@@ -11,12 +10,12 @@ export default function FilterResults({ results, collectionName }) {
   const [showTriaged, setShowTriaged] = useState(true);
   const [stateResults, setStateResults] = useState([]);
 
+  const [reducedResults, dispatch] = useReducer(resultsReducer, results);
+
   // initiate stateResults based on initial filters
   useEffect(() => {
     var tmpResults = [];
-    console.log(`results: ${results.length}`);
-    results.forEach((result) => {
-      console.log(result.status);
+    reducedResults.forEach((result) => {
       if (result.status === "new" && showNew) {
         tmpResults.push(result);
       } else if (result.status === "triaged" && showTriaged) {
@@ -25,13 +24,14 @@ export default function FilterResults({ results, collectionName }) {
         tmpResults.push(result);
       } else if (result.status === "raised" && showRaised) {
         tmpResults.push(result);
-      } else {
-        console.log("not included");
       }
     });
     setStateResults(tmpResults);
-    console.log(tmpResults.length);
-  }, [results, showNew, showTriaged, showIgnored, showRaised]);
+  }, [results, showNew, showTriaged, showIgnored, showRaised, reducedResults]);
+
+  function handleUpdateResult(result) {
+    dispatch({ type: "updated", result });
+  }
 
   return (
     <div className="flex flex-col">
@@ -46,7 +46,7 @@ export default function FilterResults({ results, collectionName }) {
             }`}
             onClick={() => setShowNew(!showNew)}
           >
-            {results.filter((r) => r.status == "new").length} untriaged
+            {reducedResults.filter((r) => r.status == "new").length} untriaged
           </div>
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
@@ -56,7 +56,7 @@ export default function FilterResults({ results, collectionName }) {
             }`}
             onClick={() => setShowTriaged(!showTriaged)}
           >
-            {results.filter((r) => r.status == "triaged").length} triaged
+            {reducedResults.filter((r) => r.status == "triaged").length} triaged
           </div>
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
@@ -66,7 +66,7 @@ export default function FilterResults({ results, collectionName }) {
             }`}
             onClick={() => setShowIgnored(!showIgnored)}
           >
-            {results.filter((r) => r.status == "ignored").length} ignored
+            {reducedResults.filter((r) => r.status == "ignored").length} ignored
           </div>
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
@@ -76,7 +76,7 @@ export default function FilterResults({ results, collectionName }) {
             }`}
             onClick={() => setShowRaised(!showRaised)}
           >
-            {results.filter((r) => r.status == "raised").length} raised
+            {reducedResults.filter((r) => r.status == "raised").length} raised
           </div>
         </div>
         <div className="p-2">
@@ -87,12 +87,13 @@ export default function FilterResults({ results, collectionName }) {
         <div className="text-4xl">{collectionName}</div>
         <div className="flex min-h-screen flex-col p-2">
           <div className="w-full divide-y mb-4">
-            {stateResults.map((result, i) => {
+            {stateResults.map((result) => {
               return (
                 <SemgResult
                   result={result}
                   collectionName={collectionName}
-                  key={i}
+                  onUpdate={handleUpdateResult}
+                  key={result.fingerprint}
                 ></SemgResult>
               );
             })}
@@ -101,4 +102,17 @@ export default function FilterResults({ results, collectionName }) {
       </div>
     </div>
   );
+}
+
+function resultsReducer(results, action) {
+  switch (action.type) {
+    case "updated": {
+      return results.map((result) => {
+        if (result.fingerprint === action.result.fingerprint) {
+          return action.result;
+        }
+        return result;
+      });
+    }
+  }
 }
