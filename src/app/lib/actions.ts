@@ -12,7 +12,7 @@ const COLLECTION = collectionNameFromJson(semgrepJsonFilePath);
 
 const FormSchema = z.object({
   fingerprint: z.string(),
-  status: z.enum(["new", "triaged", "ignored", "raised"]),
+  status: z.enum(["new", "ignored", "raised", "resolved"]),
   ignoreReason: z.string().optional(),
   internalLink: z.string().optional(),
 });

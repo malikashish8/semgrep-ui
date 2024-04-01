@@ -1,7 +1,8 @@
 "use client";
 
 import { updateTriage } from "./lib/actions";
-const { useState, useRef, useEffect, use } = require("react");
+import { baseGitlabPath } from "./app.config";
+const { useState, useRef, useEffect } = require("react");
 
 export default function SemgResult({ result, collectionName, onUpdate }) {
   const [status, setStatus] = useState(result.status);
@@ -14,13 +15,12 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
   function changed(event) {
     // identify the change
     var statusFromEvent = result.status;
-    if (event.target.innerText === "✅ Triaged") {
-      statusFromEvent = "triaged";
-      console.log("triaged");
-    } else if (event.target.innerText === "👎 Ignore") {
+    if (event.target.innerText === "👎 Ignore") {
       statusFromEvent = "ignored";
     } else if (event.target.innerText === "🕕 Raised") {
       statusFromEvent = "raised";
+    } else if (event.target.innerText === "✅ Resolved") {
+      statusFromEvent = "resolved";
     }
 
     // update the parent for filtering
@@ -51,7 +51,7 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
   var parts = result.path.split("/").length - 2;
   for (var i = 2; i < parts + 2; i++) {
     var gitlabPath =
-      `https://gitlab.com/vistaprint-org/${collectionName}/` +
+      `${baseGitlabPath}${collectionName}/` +
       result.path.split("/").slice(0, i).join("/") +
       "/-/blob/HEAD/" +
       result.path.split("/").slice(i).join("/") +
@@ -69,31 +69,27 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
           ref={statusInput}
           value={result.status}
         />
-        <div className="hover:text-white-1 text-gray-500 select-none p-1">
+        <div className="text-xl text-gray-500 select-none p-1 px-6">
           <div
-            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer ${
-              status === "triaged" ? "bg-gray-600 text-white" : ""
-            }`}
-            name="triaged"
-            onClick={changed}
-          >
-            ✅ Triaged
-          </div>
-          <div
-            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer active:bg-blue-gray-50 ${
-              status === "ignored" ? "bg-gray-600 text-white" : ""
-            }`}
+            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 ${status === "ignored" ? "bg-gray-600 text-white" : ""
+              }`}
             onClick={changed}
           >
             👎 Ignore
           </div>
           <div
-            className={`flex items-center flex-col text-xl hover:bg-gray-500 hover:text-white hover:cursor-pointer ${
-              status === "raised" ? "bg-gray-600 text-white" : ""
-            }`}
+            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 ${status === "raised" ? "bg-gray-600 text-white" : ""
+              }`}
             onClick={changed}
           >
             🕕 Raised
+          </div>
+          <div
+            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 ${status === "resolved" ? "bg-gray-600 text-white" : ""
+              }`}
+            onClick={changed}
+          >
+            ✅ Resolved
           </div>
         </div>
 
@@ -101,7 +97,7 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
           <input
             type="text"
             name="ignoreReason"
-            placeholder="Suppress Reason"
+            placeholder="Ignore Reason"
             ref={ignoreReasonInput}
             onChange={changed}
           />

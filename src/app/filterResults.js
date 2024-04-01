@@ -7,7 +7,7 @@ export default function FilterResults({ results, collectionName }) {
   const [showNew, setShowNew] = useState(false);
   const [showIgnored, setShowIgnored] = useState(true);
   const [showRaised, setShowRaised] = useState(true);
-  const [showTriaged, setShowTriaged] = useState(true);
+  const [showResolved, setShowResolved] = useState(true);
   const [stateResults, setStateResults] = useState([]);
 
   const [reducedResults, dispatch] = useReducer(resultsReducer, results);
@@ -18,16 +18,16 @@ export default function FilterResults({ results, collectionName }) {
     reducedResults.forEach((result) => {
       if (result.status === "new" && showNew) {
         tmpResults.push(result);
-      } else if (result.status === "triaged" && showTriaged) {
-        tmpResults.push(result);
       } else if (result.status === "ignored" && showIgnored) {
         tmpResults.push(result);
       } else if (result.status === "raised" && showRaised) {
         tmpResults.push(result);
+      } else if (result.status === "resolved" && showResolved) {
+        tmpResults.push(result);
       }
     });
     setStateResults(tmpResults);
-  }, [results, showNew, showTriaged, showIgnored, showRaised, reducedResults]);
+  }, [results, showNew, showResolved, showIgnored, showRaised, reducedResults]);
 
   function handleUpdateResult(result) {
     dispatch({ type: "updated", result });
@@ -39,44 +39,40 @@ export default function FilterResults({ results, collectionName }) {
         <div className="text-xl">Filters</div>
         <div className="flex text-gray-500 bg-gray-200 select-none">
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
-              showNew
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showNew
                 ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
                 : ""
-            }`}
+              }`}
             onClick={() => setShowNew(!showNew)}
           >
             {reducedResults.filter((r) => r.status == "new").length} untriaged
           </div>
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
-              showTriaged
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showIgnored
                 ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
                 : ""
-            }`}
-            onClick={() => setShowTriaged(!showTriaged)}
-          >
-            {reducedResults.filter((r) => r.status == "triaged").length} triaged
-          </div>
-          <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
-              showIgnored
-                ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
-                : ""
-            }`}
+              }`}
             onClick={() => setShowIgnored(!showIgnored)}
           >
             {reducedResults.filter((r) => r.status == "ignored").length} ignored
           </div>
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${
-              showRaised
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showRaised
                 ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
                 : ""
-            }`}
+              }`}
             onClick={() => setShowRaised(!showRaised)}
           >
             {reducedResults.filter((r) => r.status == "raised").length} raised
+          </div>
+          <div
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showResolved
+                ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
+                : ""
+              }`}
+            onClick={() => setShowResolved(!showResolved)}
+          >
+            {reducedResults.filter((r) => r.status == "resolved").length} resolved
           </div>
         </div>
         <div className="p-2">
