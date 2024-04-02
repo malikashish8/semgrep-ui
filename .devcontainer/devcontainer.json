@@ -5,11 +5,19 @@
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "dockerComposeFile": "./docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace"
+  "workspaceFolder": "/workspace",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
 
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": ["mongodb.mongodb-vscode", "esbenp.prettier-vscode"]
+    }
+  }
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
 

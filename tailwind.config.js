@@ -14,7 +14,7 @@ module.exports = {
       },
       colors: {
         'bg-top-gray': "#d6dbdc"
-      }
+      },
     },
   },
   plugins: [],

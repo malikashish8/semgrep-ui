@@ -10,6 +10,8 @@ export default function FilterResults({ results, collectionName }) {
   const [showResolved, setShowResolved] = useState(true);
   const [stateResults, setStateResults] = useState([]);
 
+  const [selectedResult, setSelectedResult] = useState(null);
+
   const [reducedResults, dispatch] = useReducer(resultsReducer, results);
 
   // initiate stateResults based on initial filters
@@ -33,6 +35,10 @@ export default function FilterResults({ results, collectionName }) {
     dispatch({ type: "updated", result });
   }
 
+  function handleResultClick(fingerprint) {
+    setSelectedResult(fingerprint);
+  }
+
   return (
     <div className="flex flex-col">
       <header className="flex items-center justify-between p-1 border-2 font-bold sticky top-0 bg-bg-top-gray border-bg-top-gray bg-opacity-100 border-b-slate-400">
@@ -40,8 +46,8 @@ export default function FilterResults({ results, collectionName }) {
         <div className="flex text-gray-500 bg-gray-200 select-none">
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showNew
-                ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
-                : ""
+              ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
+              : ""
               }`}
             onClick={() => setShowNew(!showNew)}
           >
@@ -49,8 +55,8 @@ export default function FilterResults({ results, collectionName }) {
           </div>
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showIgnored
-                ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
-                : ""
+              ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
+              : ""
               }`}
             onClick={() => setShowIgnored(!showIgnored)}
           >
@@ -58,8 +64,8 @@ export default function FilterResults({ results, collectionName }) {
           </div>
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showRaised
-                ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
-                : ""
+              ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
+              : ""
               }`}
             onClick={() => setShowRaised(!showRaised)}
           >
@@ -67,8 +73,8 @@ export default function FilterResults({ results, collectionName }) {
           </div>
           <div
             className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showResolved
-                ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
-                : ""
+              ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
+              : ""
               }`}
             onClick={() => setShowResolved(!showResolved)}
           >
@@ -81,24 +87,25 @@ export default function FilterResults({ results, collectionName }) {
       </header>
       <div className="p-4 flex flex-col items-center xl:pv-32 2xl:pv-64">
         <div className="text-4xl">{collectionName}</div>
-        <div className="flex min-h-screen flex-col p-2">
-          <div className="w-full divide-y mb-4">
-            {stateResults.map((result) => {
-              return (
-                <SemgResult
-                  result={result}
-                  collectionName={collectionName}
-                  onUpdate={handleUpdateResult}
-                  key={result.fingerprint}
-                ></SemgResult>
-              );
-            })}
-          </div>
+        <div className="w-full flex min-h-screen flex-col divide-y p-2 mb-4">
+          {stateResults.map((result) => {
+            return (
+              <SemgResult
+                result={result}
+                collectionName={collectionName}
+                onUpdate={handleUpdateResult}
+                isSelected={result.fingerprint === selectedResult}
+                handleClick={() => handleResultClick(result.fingerprint)}
+                key={result.fingerprint}
+              ></SemgResult>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
+
 
 function resultsReducer(results, action) {
   switch (action.type) {

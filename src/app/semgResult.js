@@ -4,7 +4,7 @@ import { updateTriage } from "./lib/actions";
 import { baseGitlabPath } from "./app.config";
 const { useState, useRef, useEffect } = require("react");
 
-export default function SemgResult({ result, collectionName, onUpdate }) {
+export default function SemgResult({ result, collectionName, onUpdate, isSelected, handleClick }) {
   const [status, setStatus] = useState(result.status);
   const triageForm = useRef(null);
   var statusInput = useRef(null);
@@ -60,7 +60,7 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
   }
 
   return (
-    <div className="p-2 flex items-center">
+    <div className={`p-2 flex items-center border-l-4  ${isSelected ? "bg-gray-400 border-l-pink-500" : ""}`} onClick={handleClick}>
       <form action={updateTriage} className="p-1" ref={triageForm}>
         <input type="hidden" name="fingerprint" value={result.fingerprint} />
         <input
@@ -116,14 +116,14 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
         <div className="font-mono text-sm">
           {result.check_id}{" "}
           <a
-            className="no-underline"
+            className="no-underline text-xs"
             href={result.extra.metadata["semgrep.dev"].rule.url}
             target="_blank"
           >
             &#128279;
           </a>
           <a
-            className="no-underline"
+            className="no-underline text-xs"
             href={result.extra.metadata.source}
             target="_blank"
           >
@@ -143,8 +143,8 @@ export default function SemgResult({ result, collectionName, onUpdate }) {
         </div>
         {/* code */}
         <div className="font-mono text-sm text-orange-800">
-          {result.extra.lines.length > 200
-            ? result.extra.lines.slice(0, 200) + "..."
+          {result.extra.lines.length > 150
+            ? result.extra.lines.slice(0, 150) + "..."
             : result.extra.lines}
         </div>
         <div>{result.extra.message}</div>
