@@ -60,7 +60,7 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
   }
 
   return (
-    <div className={`p-2 flex items-center border-l-4  ${isSelected ? "bg-gray-400 border-l-pink-500" : ""}`} onClick={handleClick}>
+    <div className={`p-2 flex items-center border-l-4 rounded-sm ${isSelected ? "bg-gray-400 border-l-pink-500" : ""}`} onClick={handleClick}>
       <form action={updateTriage} className="p-1" ref={triageForm}>
         <input type="hidden" name="fingerprint" value={result.fingerprint} />
         <input
@@ -71,21 +71,21 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
         />
         <div className="text-xl text-gray-500 select-none p-1 px-6">
           <div
-            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 ${status === "ignored" ? "bg-gray-600 text-white" : ""
+            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 rounded-lg ${status === "ignored" ? "bg-gray-600 text-white" : ""
               }`}
             onClick={changed}
           >
             👎 Ignore
           </div>
           <div
-            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 ${status === "raised" ? "bg-gray-600 text-white" : ""
+            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 rounded-lg ${status === "raised" ? "bg-gray-600 text-white" : ""
               }`}
             onClick={changed}
           >
             🕕 Raised
           </div>
           <div
-            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 ${status === "resolved" ? "bg-gray-600 text-white" : ""
+            className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 rounded-lg ${status === "resolved" ? "bg-gray-600 text-white" : ""
               }`}
             onClick={changed}
           >
@@ -100,6 +100,7 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
             placeholder="Ignore Reason"
             ref={ignoreReasonInput}
             onChange={changed}
+            className="rounded-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
           />
         </div>
         <div className="p-1">
@@ -109,6 +110,7 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
             placeholder="Internal Link"
             ref={internalLinkInput}
             onChange={changed}
+            className="rounded-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
           />
         </div>
       </form>

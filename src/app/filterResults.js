@@ -43,9 +43,9 @@ export default function FilterResults({ results, collectionName }) {
     <div className="flex flex-col">
       <header className="flex items-center justify-between p-1 border-2 font-bold sticky top-0 bg-bg-top-gray border-bg-top-gray bg-opacity-100 border-b-slate-400">
         <div className="text-xl">Filters</div>
-        <div className="flex text-gray-500 bg-gray-200 select-none">
+        <div className="flex text-gray-500 bg-gray-200 select-none rounded-lg">
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showNew
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer rounded-lg ${showNew
               ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
               : ""
               }`}
@@ -54,7 +54,7 @@ export default function FilterResults({ results, collectionName }) {
             {reducedResults.filter((r) => r.status == "new").length} untriaged
           </div>
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showIgnored
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer rounded-lg ${showIgnored
               ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
               : ""
               }`}
@@ -63,7 +63,7 @@ export default function FilterResults({ results, collectionName }) {
             {reducedResults.filter((r) => r.status == "ignored").length} ignored
           </div>
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showRaised
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer rounded-lg ${showRaised
               ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
               : ""
               }`}
@@ -72,7 +72,7 @@ export default function FilterResults({ results, collectionName }) {
             {reducedResults.filter((r) => r.status == "raised").length} raised
           </div>
           <div
-            className={`p-2 border-2 hover:text-black hover:cursor-pointer ${showResolved
+            className={`p-2 border-2 hover:text-black hover:cursor-pointer rounded-lg ${showResolved
               ? "bbox-decoration-slice bg-gradient-to-r from-indigo-600 to-pink-500 text-white"
               : ""
               }`}
@@ -85,7 +85,7 @@ export default function FilterResults({ results, collectionName }) {
           {stateResults.length}/{results.length} selected
         </div>
       </header>
-      <div className="p-4 flex flex-col items-center xl:pv-32 2xl:pv-64">
+      <div className="p-4 flex flex-col items-center md:px-32 2xl:px-64">
         <div className="text-4xl">{collectionName}</div>
         <div className="w-full flex min-h-screen flex-col divide-y p-2 mb-4">
           {stateResults.map((result) => {
