@@ -2,6 +2,8 @@
 
 This is a Next.js app to provide a UI to triage the JSON output of a Semgrep CLI scan. It creates a Mongo DB to store the results.
 
+![Screenshot](./static/screenshot.png)
+
 ## Pre-requisites
 
 Following are the pre-requisites to be fulfilled before running the app:
