@@ -2,10 +2,8 @@
 
 import { MongoClient } from "mongodb";
 import { z } from "zod";
-import {
-  collectionNameFromJson,
-  semgrepJsonFilePath,
-} from "../../scripts/mongoUtils";
+import { collectionNameFromJson } from "../../scripts/mongoUtils";
+import { semgrepJsonFilePath } from "../app.config";
 
 const DB = "semgrep";
 const COLLECTION = collectionNameFromJson(semgrepJsonFilePath);

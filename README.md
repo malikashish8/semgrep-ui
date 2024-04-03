@@ -1,35 +1,35 @@
 # Local Semgrep UI
 
-This is a Next.js app to provide a UI to triage the output of a Semgrep CLI scan.
-
-## Scripts
-
-`src/scripts/mongoUtils.js` has the scripts to add, update, delete a Semgrep output file in the MongoDB where the file can be updated. Each new file should be added as a new mongo collection.
-You can use (ghorg)[https://github.com/gabrie30/ghorg] to quickly clone all repos in the org.
+This is a Next.js app to provide a UI to triage the JSON output of a Semgrep CLI scan. It creates a Mongo DB to store the results.
 
 ## Pre-requisites
 
-Following is the current workflow for both setting up the dev environment and triaging a file
+Following are the pre-requisites to be fulfilled before running the app:
 
-1. Use [ghorg](https://github.com/gabrie30/ghorg) to quickly clone all repos in the org locally
-2. Run Semgrep with a command like the following on the folder with the repos:
+1. Use [ghorg](https://github.com/gabrie30/ghorg) to quickly clone all repos in the target org locally
+2. Run Semgrep CLI with a command like the following on the folder with the repos:
 
 ```bash
 semgrep scan --config auto . --json >  marketing.json
 ```
 
-3. Mount the folder with the `json` file generated in the step above in Docker settings and update the app volumes section in docker-compose.yml
-4. Configure `baseGitlabPath` in app.config.js
-5. In the UI run scripts to import all results from the json file to Mongo
-   - In app/scripts/mongoUtils.js update the `semgrepJsonFilePath` at the top to match the file path on the mount
-   - Uncomment the line to create collection from file - `await createCollectionFromJson(semgrepJsonFilePath);`
+3. Mount the folder with the JSON file generated in the step above in Docker settings and update the app volumes section in docker-compose.yml
+4. Configure `semgrepJsonFilePath` and `baseGitlabPath` in app.config.js
+
+### Configuration
+
+- Update configurations in `app.config.js` file:
+  - `semgrepJsonFilePath` - (mandatory) Path of the semgrep output JSON file on the mount. Results are loaded from this file to mongo DB for storage and triage. The name of the file is used to construct group name in the probable Gitlab URLs when presenting the results for triage.
+  - `baseGitlabPath` - (mandatory) Base path of Gitlab to be appended to each Gitlab link.
+  - `ignoredCheckIds` - Semgrep check ids to be ignored since they are all insignificant or false positive
+  - `ignoredPathsContaining` - Any issue with any of these strings in the path is ignored.
 
 ## Run the application
 
 Run the application
 
-- Install dependencies with `npm install`
-- `npm run dev`
+1. Install dependencies with `npm install`
+2. `npm run dev`
 
 ## TODO
 

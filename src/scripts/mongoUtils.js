@@ -1,8 +1,8 @@
 const { MongoClient } = require('mongodb');
 const { readFileSync } = require('fs');
+const { semgrepJsonFilePath } = require('../app/app.config');
 
 const DB = 'semgrep';
-const semgrepJsonFilePath = '/semgrep-out/gallery.json'
 
 async function listCollections() {
     const uri = 'mongodb://localhost:27017';
@@ -24,13 +24,13 @@ async function listCollections() {
     }
 }
 
-function loadJSON(jsonFilePath){
+function loadJSON(jsonFilePath) {
     const data = readFileSync(jsonFilePath);
     return JSON.parse(data);
 }
 
-function collectionNameFromJson(jsonFilePath){
-    return jsonFilePath.split('/').slice(-1)[0].split('.').slice(0,-1).join('')
+function collectionNameFromJson(jsonFilePath) {
+    return jsonFilePath.split('/').slice(-1)[0].split('.').slice(0, -1).join('')
 }
 
 async function createCollectionFromJson(jsonFilePath) {
@@ -48,6 +48,7 @@ async function createCollectionFromJson(jsonFilePath) {
         jsonData.results.forEach((result) => {
             // bring important fields to the top level
             result.fingerprint = result.extra.fingerprint;
+            result._id = result.fingerprint;
             result.severity = result.extra.severity;
             // add additional fields
             result.status = 'new';
@@ -60,13 +61,13 @@ async function createCollectionFromJson(jsonFilePath) {
         await collection.insertMany(jsonData.results);
         console.log(`Collection ${collectionName} created`);
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error.message);
     } finally {
         await client.close();
     }
 }
 
-async function documentsCount(collectionName){
+async function documentsCount(collectionName) {
     const uri = 'mongodb://localhost:27017';
     const client = new MongoClient(uri);
 
@@ -83,7 +84,7 @@ async function documentsCount(collectionName){
     }
 }
 
-async function getAllDocuments(collectionName){
+async function getAllDocuments(collectionName) {
     const uri = 'mongodb://localhost:27017';
     const client = new MongoClient(uri);
 
@@ -100,7 +101,7 @@ async function getAllDocuments(collectionName){
     }
 }
 
-async function dropCollection(collectionName){
+async function dropCollection(collectionName) {
     const uri = 'mongodb://localhost:27017';
     const client = new MongoClient(uri);
 
@@ -117,10 +118,10 @@ async function dropCollection(collectionName){
 }
 async function runThis() {
     // await dropCollection(collectionNameFromJson(semgrepJsonFilePath));
-    // await createCollectionFromJson(semgrepJsonFilePath);
+    await createCollectionFromJson(semgrepJsonFilePath);
     // await listCollections();
     // documentsCount(collectionNameFromJson(semgrepJsonFilePath));
-    
+
     // getAllDocuments(collectionNameFromJson(semgrepJsonFilePath)).then((documents) => {
     //     documents.filter(r => r.status === 'ignored').forEach((r) => {
     //         console.log(r._id);
@@ -136,6 +137,5 @@ module.exports = {
     createCollectionFromJson,
     documentsCount,
     getAllDocuments,
-    dropCollection,
-    semgrepJsonFilePath
+    dropCollection
 }

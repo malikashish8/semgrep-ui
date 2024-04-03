@@ -23,19 +23,22 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
       statusFromEvent = "resolved";
     }
 
-    // update the parent for filtering
-    onUpdate({
-      ...result,
-      fingerprint: result.fingerprint,
-      status: statusFromEvent,
-      ignoreReason: ignoreReasonInput.current.value,
-      internalLink: internalLinkInput.current.value,
-    });
+    if (statusFromEvent !== result.status) {
+      // update the parent for filtering on status change
+      onUpdate({
+        ...result,
+        fingerprint: result.fingerprint,
+        status: statusFromEvent,
+        ignoreReason: ignoreReasonInput.current.value,
+        internalLink: internalLinkInput.current.value,
+      });
+
+      setStatus(statusFromEvent);
+      statusInput.current.value = statusFromEvent;
+    }
 
     // send the form to backend
-    statusInput.current.value = statusFromEvent;
     triageForm.current.requestSubmit();
-    setStatus(statusFromEvent);
   }
 
   // when the result is updated from the parent set respective form value
@@ -49,7 +52,7 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
   var linkHash = "#L" + result.start.line + "-" + result.end.line;
   var gitlabPaths = [];
   var parts = result.path.split("/").length - 2;
-  for (var i = 2; i < parts + 2; i++) {
+  for (var i = 1; i < parts + 2; i++) {
     var gitlabPath =
       `${baseGitlabPath}${collectionName}/` +
       result.path.split("/").slice(0, i).join("/") +
@@ -60,7 +63,7 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
   }
 
   return (
-    <div className={`p-2 flex items-center border-l-4 rounded-sm ${isSelected ? "bg-gray-400 border-l-pink-500" : ""}`} onClick={handleClick}>
+    <div className={`flex items-center p-2 border-l-4 rounded-sm ${isSelected ? "bg-gray-200 border-l-pink-500" : ""}`} onClick={handleClick}>
       <form action={updateTriage} className="p-1" ref={triageForm}>
         <input type="hidden" name="fingerprint" value={result.fingerprint} />
         <input
@@ -69,7 +72,7 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
           ref={statusInput}
           value={result.status}
         />
-        <div className="text-xl text-gray-500 select-none p-1 px-6">
+        <div className="text-xl text-gray-500 select-none p-1 px-4">
           <div
             className={`hover:text-white hover:bg-gray-500 hover:cursor-pointer px-4 rounded-lg ${status === "ignored" ? "bg-gray-600 text-white" : ""
               }`}

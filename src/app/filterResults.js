@@ -4,10 +4,10 @@ import { useEffect, useReducer, useState } from "react";
 import SemgResult from "./semgResult";
 
 export default function FilterResults({ results, collectionName }) {
-  const [showNew, setShowNew] = useState(false);
+  const [showNew, setShowNew] = useState(true);
   const [showIgnored, setShowIgnored] = useState(true);
-  const [showRaised, setShowRaised] = useState(true);
-  const [showResolved, setShowResolved] = useState(true);
+  const [showRaised, setShowRaised] = useState(false);
+  const [showResolved, setShowResolved] = useState(false);
   const [stateResults, setStateResults] = useState([]);
 
   const [selectedResult, setSelectedResult] = useState(null);
