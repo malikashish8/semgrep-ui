@@ -4,7 +4,7 @@ import { updateTriage } from "./lib/actions";
 import { baseGitlabPath } from "./app.config";
 const { useState, useRef, useEffect } = require("react");
 
-export default function SemgResult({ result, collectionName, onUpdate, isSelected, handleClick }) {
+export default function SemgResult({ result, collectionName, orgPath, onUpdate, isSelected, handleClick }) {
   const [status, setStatus] = useState(result.status);
   const triageForm = useRef(null);
   var statusInput = useRef(null);
@@ -53,8 +53,14 @@ export default function SemgResult({ result, collectionName, onUpdate, isSelecte
   var gitlabPaths = [];
   var parts = result.path.split("/").length - 2;
   for (var i = 1; i < parts + 2; i++) {
+    var orgGitlabPath = "";
+    if (orgPath !== "") {
+      orgGitlabPath = baseGitlabPath + orgPath;
+    } else {
+      orgGitlabPath = `${baseGitlabPath}${collectionName}/`
+    }
     var gitlabPath =
-      `${baseGitlabPath}${collectionName}/` +
+      orgGitlabPath +
       result.path.split("/").slice(0, i).join("/") +
       "/-/blob/HEAD/" +
       result.path.split("/").slice(i).join("/") +

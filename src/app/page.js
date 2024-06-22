@@ -4,7 +4,7 @@ const {
   getAllDocuments,
   collectionNameFromJson,
 } = require("../scripts/mongoUtils");
-import { ignoredCheckIds, ignoredPathsContaining, onlyErrorSeverity, impactMedOrHigher, likelihoodMedOrHigher, semgrepJsonFilePath } from "./app.config";
+import { ignoredCheckIds, ignoredPathsContaining, onlyErrorSeverity, orgPath, impactMedOrHigher, likelihoodMedOrHigher, semgrepJsonFilePath } from "./app.config";
 import FilterResults from "./filterResults";
 
 export default async function Home() {
@@ -32,6 +32,7 @@ export default async function Home() {
     <FilterResults
       results={JSON.parse(JSON.stringify(results))}
       collectionName={collectionName}
+      orgPath={orgPath}
     ></FilterResults>
   );
 }
