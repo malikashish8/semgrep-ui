@@ -53,9 +53,7 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="w-full grow text-center item-center border-2 bg-bg-top-gray border-bg-top-gray bg-opacity-100 border-b-slate-400">
-        <FileInput updateFileName={updateFileName} updateFileJSON={updateFileJSON} updateBaseScmPath={updateBaseScmPath} className="relative pb-10 min-h-screen"></FileInput>
-      </div>
+      <FileInput updateFileName={updateFileName} updateFileJSON={updateFileJSON} updateBaseScmPath={updateBaseScmPath} className="relative pb-10 min-h-screen"></FileInput>
       {collectionName &&
         <FilterResults
           results={JSON.parse(JSON.stringify(results))}

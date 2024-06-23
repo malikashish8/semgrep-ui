@@ -2,7 +2,7 @@
 
 This is a Next.js app to provide a UI to triage the JSON output of a Semgrep CLI scan.
 
-It uses Mongo DB to store the results. Simply select Semgrep output JSON file to load it in the UI. Results are loaded from this file to Mongo DB for persistance and triage. The name of the file is used to construct group name in the probable Gitlab URLs when presenting the results for triage. Code org path is another input which is used to construct the links to the code in the issues.
+Simply select Semgrep output JSON file in the UI to load it. Results are loaded from this file to Mongo DB for persistance and triage. The name of the file is used to construct group name in the probable Gitlab URLs when presenting the results for triage. Code org path is another input which is used to construct the links to the code in the issues.
 
 ![Screenshot](./static/screenshot.png)
 

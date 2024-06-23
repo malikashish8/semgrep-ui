@@ -52,15 +52,15 @@ export default function FileInput({ updateFileName, updateFileJSON, updateBaseSc
     }
 
     return (
-        <div className="bg-bg-top-gray border-bg-top-gray bg-opacity-100 border-b-slate-400">
-            <form onSubmit={handleSubmit} className="grow p-2">
+        <div className="text-center text-gray-200 bg-gray-700 p-2">
+            <form onSubmit={handleSubmit}>
                 <label htmlFor="file" className="px-1"> Choose Semgrep out file:</label >
-                <input type="file" ref={inputFile} id="file" name="Semgrep Output File" accept=".json" />
+                <input type="file" ref={inputFile} id="file" name="Semgrep Output File" accept=".json" className="full rounded-lg cursor-pointer focus:outline-none" />
 
                 <label htmlFor="scmPath" className="px-1">Code Org path:</label>
-                <input type="text" ref={scmPath} name="scmPath" placeholder="https://gitlab.com/myorg" className="w-64 text-sm" />
+                <input type="text" ref={scmPath} name="scmPath" placeholder="https://gitlab.com/myorg" className="w-64 text-sm rounded-sm text-gray-800 py-1 px-1" />
 
-                <button type="submit" value="Submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold mx-4 px-4 rounded-full" >Load</button>
+                <button type="submit" value="Submit" className="bg-gray-100 text-gray-800 font-bold mx-4 px-4 py-1 rounded-sm hover:bbox-decoration-slice hover:bg-gradient-to-r hover:from-indigo-600 hover:to-pink-500 hover:text-white" >Load</button>
             </form >
         </div >
     );
