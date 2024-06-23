@@ -5,7 +5,6 @@ services:
     image: mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye
     tty: true
     volumes:
-      - ~/semgrep-out/:/semgrep-out
       - ..:/workspace:cached
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     network_mode: service:db

@@ -1,10 +1,9 @@
 "use client";
 
 import { updateTriage } from "./lib/actions";
-import { baseGitlabPath } from "./app.config";
 const { useState, useRef, useEffect } = require("react");
 
-export default function SemgResult({ result, collectionName, orgPath, onUpdate, isSelected, handleClick }) {
+export default function SemgResult({ result, collectionName, baseScmPath, onUpdate, isSelected, handleClick }) {
   const [status, setStatus] = useState(result.status);
   const triageForm = useRef(null);
   var statusInput = useRef(null);
@@ -53,12 +52,8 @@ export default function SemgResult({ result, collectionName, orgPath, onUpdate, 
   var gitlabPaths = [];
   var parts = result.path.split("/").length - 2;
   for (var i = 1; i < parts + 2; i++) {
-    var orgGitlabPath = "";
-    if (orgPath !== "") {
-      orgGitlabPath = baseGitlabPath + orgPath;
-    } else {
-      orgGitlabPath = `${baseGitlabPath}${collectionName}/`
-    }
+    var orgGitlabPath = orgGitlabPath = `${baseScmPath}${collectionName}/`
+
     var gitlabPath =
       orgGitlabPath +
       result.path.split("/").slice(0, i).join("/") +
@@ -70,7 +65,7 @@ export default function SemgResult({ result, collectionName, orgPath, onUpdate, 
 
   return (
     <div className={`flex items-center p-2 border-l-4 rounded-sm ${isSelected ? "bg-gray-200 border-l-pink-500" : ""}`} onClick={handleClick}>
-      <form action={updateTriage} className="p-1" ref={triageForm}>
+      <form action={(formData) => updateTriage(collectionName, formData)} className="p-1" ref={triageForm}>
         <input type="hidden" name="fingerprint" value={result.fingerprint} />
         <input
           type="hidden"

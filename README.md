@@ -1,6 +1,8 @@
 # Local Semgrep UI
 
-This is a Next.js app to provide a UI to triage the JSON output of a Semgrep CLI scan. It creates a Mongo DB to store the results.
+This is a Next.js app to provide a UI to triage the JSON output of a Semgrep CLI scan.
+
+Simply select Semgrep output JSON file in the UI to load it. Results are loaded from this file to Mongo DB for persistance and triage. The name of the file is used to construct group name in the probable Gitlab URLs when presenting the results for triage. Code org path is another input which is used to construct the links to the code in the issues.
 
 ![Screenshot](./static/screenshot.png)
 
@@ -15,14 +17,9 @@ Following are the pre-requisites to be fulfilled before running the app:
 semgrep scan --config auto . --json >  marketing.json
 ```
 
-3. Mount the folder with the JSON file generated in the step above in Docker settings and update the app volumes section in docker-compose.yml
-4. Configure `semgrepJsonFilePath` and `baseGitlabPath` in app.config.js
-
 ### Configuration
 
 - Update configurations in `app.config.js` file:
-  - `semgrepJsonFilePath` - (mandatory) Path of the semgrep output JSON file on the mount. Results are loaded from this file to mongo DB for storage and triage. The name of the file is used to construct group name in the probable Gitlab URLs when presenting the results for triage.
-  - `baseGitlabPath` - (mandatory) Base path of Gitlab to be appended to each Gitlab link.
   - `ignoredCheckIds` - Semgrep check ids to be ignored since they are all insignificant or false positive
   - `ignoredPathsContaining` - Any issue with any of these strings in the path is ignored.
 
@@ -36,8 +33,7 @@ Run the application
 ## TODO
 
 1. Allow configuration for switching to Github (in addition to Gitlab) links
-2. Redesign the app to allow drag and drop since mounting with docker is a pain
-3. Move from mongo to local file storage to make execution easier - simply run the html bundle locally and save changes to the json file
+2. Move from Mongo to local file storage (SQLite?) to make execution easier - simply run the html bundle locally and save changes to the json file. This will likely require switching from Next.js to React.
 
 ## Security
 

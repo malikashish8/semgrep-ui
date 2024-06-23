@@ -2,11 +2,8 @@
 
 import { MongoClient } from "mongodb";
 import { z } from "zod";
-import { collectionNameFromJson } from "../../scripts/mongoUtils";
-import { semgrepJsonFilePath } from "../app.config";
 
 const DB = "semgrep";
-const COLLECTION = collectionNameFromJson(semgrepJsonFilePath);
 
 const FormSchema = z.object({
   fingerprint: z.string(),
@@ -15,7 +12,7 @@ const FormSchema = z.object({
   internalLink: z.string().optional(),
 });
 
-export async function updateTriage(formData: FormData) {
+export async function updateTriage(collectionName: string, formData: FormData) {
   const data = FormSchema.parse({
     fingerprint: formData.get("fingerprint"),
     status: formData.get("status"),
@@ -28,7 +25,7 @@ export async function updateTriage(formData: FormData) {
   try {
     await client.connect();
     const db = client.db(DB);
-    const collection = db.collection(COLLECTION);
+    const collection = db.collection(collectionName);
     await collection.findOneAndUpdate(
       { fingerprint: fingerprint },
       {
