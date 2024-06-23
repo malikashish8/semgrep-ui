@@ -3,7 +3,7 @@
 import { useEffect, useReducer, useState } from "react";
 import SemgResult from "./semgResult";
 
-export default function FilterResults({ results, collectionName, orgPath }) {
+export default function FilterResults({ results, collectionName, baseScmPath }) {
   const [showNew, setShowNew] = useState(true);
   const [showIgnored, setShowIgnored] = useState(true);
   const [showRaised, setShowRaised] = useState(false);
@@ -93,7 +93,7 @@ export default function FilterResults({ results, collectionName, orgPath }) {
               <SemgResult
                 result={result}
                 collectionName={collectionName}
-                orgPath={orgPath}
+                baseScmPath={baseScmPath}
                 onUpdate={handleUpdateResult}
                 isSelected={result.fingerprint === selectedResult}
                 handleClick={() => handleResultClick(result.fingerprint)}

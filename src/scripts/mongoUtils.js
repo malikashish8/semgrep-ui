@@ -1,12 +1,10 @@
-const { MongoClient } = require('mongodb');
-const { readFileSync } = require('fs');
-const { semgrepJsonFilePath } = require('../app/app.config');
+import { MongoClient } from 'mongodb';
 
 const DB = 'semgrep';
+const DB_URI = 'mongodb://localhost:27017';
 
 async function listCollections() {
-    const uri = 'mongodb://localhost:27017';
-    const client = new MongoClient(uri);
+    const client = new MongoClient(DB_URI);
 
     try {
         await client.connect();
@@ -24,20 +22,12 @@ async function listCollections() {
     }
 }
 
-function loadJSON(jsonFilePath) {
-    const data = readFileSync(jsonFilePath);
-    return JSON.parse(data);
+function collectionNameFromFileName(fileName) {
+    return fileName.split('.').slice(0, -1).join('')
 }
 
-function collectionNameFromJson(jsonFilePath) {
-    return jsonFilePath.split('/').slice(-1)[0].split('.').slice(0, -1).join('')
-}
-
-async function createCollectionFromJson(jsonFilePath) {
-    var jsonData = loadJSON(jsonFilePath);
-    const collectionName = collectionNameFromJson(jsonFilePath);
-    const uri = 'mongodb://localhost:27017';
-    const client = new MongoClient(uri);
+async function createCollectionFromJson(collectionName, jsonData) {
+    const client = new MongoClient(DB_URI);
 
     try {
         await client.connect();
@@ -67,16 +57,26 @@ async function createCollectionFromJson(jsonFilePath) {
     }
 }
 
-async function documentsCount(collectionName) {
-    const uri = 'mongodb://localhost:27017';
-    const client = new MongoClient(uri);
+async function collectionStats(collectionName) {
+    const client = new MongoClient(DB_URI);
 
     try {
-        await client.connect();
-        const database = client.db(DB);
-        const collection = database.collection(collectionName);
-        const count = await collection.countDocuments();
-        console.log(`Collection ${collectionName} has ${count} documents`);
+        const allIssues = await getAllDocuments(collectionName)
+        console.log(`Collection ${collectionName} has ${allIssues.length} documents`);
+        const securityIssues = allIssues.filter(document => document.extra.metadata.category === "security")
+        console.log(`security issues: ${securityIssues.length}`)
+
+        // print breakdown by value of status
+        let statusBreakdown = {};
+        securityIssues.forEach((doc) => {
+
+            if (statusBreakdown[doc.status]) {
+                statusBreakdown[doc.status]++;
+            } else {
+                statusBreakdown[doc.status] = 1;
+            }
+        });
+        console.log('Status breakdown:\n', statusBreakdown);
     } catch (error) {
         console.error('Error:', error);
     } finally {
@@ -85,8 +85,7 @@ async function documentsCount(collectionName) {
 }
 
 async function getAllDocuments(collectionName) {
-    const uri = 'mongodb://localhost:27017';
-    const client = new MongoClient(uri);
+    const client = new MongoClient(DB_URI);
 
     try {
         await client.connect();
@@ -95,15 +94,14 @@ async function getAllDocuments(collectionName) {
         const documents = await collection.find().toArray();
         return documents;
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error in getAllDocuments():', error);
     } finally {
         await client.close();
     }
 }
 
 async function dropCollection(collectionName) {
-    const uri = 'mongodb://localhost:27017';
-    const client = new MongoClient(uri);
+    const client = new MongoClient(DB_URI);
 
     try {
         await client.connect();
@@ -116,26 +114,20 @@ async function dropCollection(collectionName) {
         await client.close();
     }
 }
-async function runThis() {
-    // await dropCollection(collectionNameFromJson(semgrepJsonFilePath));
-    await createCollectionFromJson(semgrepJsonFilePath);
-    // await listCollections();
-    // documentsCount(collectionNameFromJson(semgrepJsonFilePath));
 
-    // getAllDocuments(collectionNameFromJson(semgrepJsonFilePath)).then((documents) => {
-    //     documents.filter(r => r.status === 'ignored').forEach((r) => {
-    //         console.log(r._id);
-    //     });
-    // });
-}
+// async function runThis() {
+//     var collectionName = 'juice-shop';
+//     await listCollections();
+//     await collectionStats(collectionName);
+//     // await dropCollection(collectionName);
+// }
 
-runThis();
+// runThis();
 
 module.exports = {
-    collectionNameFromJson,
+    collectionNameFromFileName,
     listCollections,
     createCollectionFromJson,
-    documentsCount,
     getAllDocuments,
     dropCollection
 }
